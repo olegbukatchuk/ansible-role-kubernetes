@@ -1,0 +1,22 @@
+# -*- mode: ruby -*-
+
+nodes = {
+  "k8s0" => "192.168.10.10",
+  "k8s1" => "192.168.10.11",
+  "k8s2" => "192.168.10.12"
+}
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "debian/stretch64"
+  config.vm.box_url = "debian/stretch64"
+  nodes.each do |name, ip|
+    config.vm.define name do |machine|
+      machine.vm.hostname = "%s" % name
+      machine.vm.network :private_network, ip: ip
+      machine.vm.provider "virtualbox" do |v|
+        v.customize ["modifyvm", :id, "--memory", 1024]
+        v.customize ["modifyvm", :id, "--cpus", 1]
+      end
+    end
+  end
+end
